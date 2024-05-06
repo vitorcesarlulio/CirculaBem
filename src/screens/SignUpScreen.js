@@ -43,10 +43,10 @@ const SignUpScreen = () => {
                 w="75%"
                 mt="2"
             />
-            <Checkbox value="agree-terms" colorScheme="blue">
+            <Checkbox value="agree-terms">
                 I agree to the Terms & Conditions and Privacy Policy
             </Checkbox>
-            <Button w="75%" mt="2" colorScheme="blue">Sign Up</Button>
+            <Button w="75%" mt="2" bg="primary.500">Sign Up</Button>
             <Link onPress={() => navigation.navigate('Login')}>
                 Have an account? Login
             </Link>

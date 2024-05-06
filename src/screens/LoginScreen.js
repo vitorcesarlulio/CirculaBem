@@ -27,13 +27,13 @@ const LoginScreen = () => {
         w="75%"
         mt="2"
       />
-      <Checkbox value="remember-me" colorScheme="blue">
+      <Checkbox value="remember-me" colorScheme="blue" _text={{ fontSize: "sm" }}>
         Remember me
       </Checkbox>
       <Link _text={{ fontSize: "sm" }} alignSelf="flex-end" mr="12%">
         Forgot account?
       </Link>
-      <Button w="75%" mt="2" colorScheme="blue">Login</Button>
+      <Button w="75%" mt="2" bg="primary.500">Login</Button>
       <Divider my="2" w="75%" />
       <Button w="75%" leftIcon={<Icon as={MaterialIcons} name="google" size="sm" />} colorScheme="red">
         Continue with Google
