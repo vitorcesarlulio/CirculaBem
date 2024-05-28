@@ -16,7 +16,17 @@ export const registerUser = async (userData) => {
         const response = await apiClient.post('/User', userData);
         return response.data;
     } catch (error) {
-        console.error('Error registering user:', error);
+        console.error('Erro ao registrar usuário:', error);
+        throw error;
+    }
+};
+
+export const authenticateUser = async (credentials) => {
+    try {
+        const response = await apiClient.post('/Authentication/authenticate', credentials);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao autenticar usuário:', error);
         throw error;
     }
 };
