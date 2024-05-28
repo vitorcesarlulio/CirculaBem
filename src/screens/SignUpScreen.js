@@ -6,22 +6,46 @@ import { registerUser } from '../services/api';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
+// Função para validar CPF
+function validateCPF(cpf) {
+    cpf = cpf.replace(/[^\d]+/g, '');
+    if (cpf.length !== 11 || !!cpf.match(/(\d)\1{10}/)) return false;
+    let soma = 0;
+    let resto;
+    for (let i = 1; i <= 9; i++) {
+        soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+    }
+    resto = (soma * 10) % 11;
+    if ((resto === 10) || (resto === 11)) resto = 0;
+    if (resto !== parseInt(cpf.substring(9, 10))) return false;
+    soma = 0;
+    for (let i = 1; i <= 10; i++) {
+        soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+    }
+    resto = (soma * 10) % 11;
+    if ((resto === 10) || (resto === 11)) resto = 0;
+    if (resto !== parseInt(cpf.substring(10, 11))) return false;
+    return true;
+}
+
+
 // Esquema de validação Yup
 const signUpValidationSchema = Yup.object().shape({
-  name: Yup.string()
-    .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ")
-    .required('Nome é obrigatório'),
-  surName: Yup.string()
-    .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ")
-    .required('Sobrenome é obrigatório'),
-  email: Yup.string()
-    .email('Por favor insira um email válido')
-    .required('Email é obrigatório'),
-  pwd: Yup.string()
-    .min(6, 'A senha deve ter pelo menos 6 caracteres')
-    .required('Senha é obrigatória'),
-  regNum: Yup.string()
-    .required('Documento é obrigatório'),
+    name: Yup.string()
+        .matches(/^[aA-zZ\s]+$/, "Somente alfabetos são permitidos para este campo ")
+        .required('Nome é obrigatório'),
+    surName: Yup.string()
+        .matches(/^[aA-zZ\s]+$/, "Somente alfabetos são permitidos para este campo ")
+        .required('Sobrenome é obrigatório'),
+    email: Yup.string()
+        .email('Por favor insira um email válido')
+        .required('Email é obrigatório'),
+    pwd: Yup.string()
+        .min(6, 'A senha deve ter pelo menos 6 caracteres')
+        .required('Senha é obrigatória'),
+    regNum: Yup.string()
+        .required('Documento é obrigatório')
+        .test('is-cpf', 'CPF inválido', value => validateCPF(value)),
 });
 
 const SignUpScreen = () => {
@@ -36,14 +60,14 @@ const SignUpScreen = () => {
                 try {
                     await registerUser(values);
                     toast.show({
-                        description: "User registered successfully.",
+                        description: "Usuário cadastrado com sucesso.",
                         status: "success",
                         duration: 3000
                     });
                     navigation.navigate('Login');
                 } catch (error) {
                     toast.show({
-                        description: "Failed to register user.",
+                        description: "Falha ao registrar usuário.",
                         status: "error",
                         duration: 3000
                     });
@@ -129,7 +153,7 @@ const SignUpScreen = () => {
                         Inscrever-se
                     </Button>
                     <Link _text={{ fontSize: "sm", color: "blue.600" }} onPress={() => navigation.navigate('Login')}>
-                        Ter uma conta? Conecte-se
+                        Tem uma conta? Conecte-se
                     </Link>
                 </VStack>
             )}
