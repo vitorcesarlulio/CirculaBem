@@ -4,6 +4,7 @@ import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import HomeScreen from '../screens/HomeScreen';
+import SearchResultsScreen from '../screens/SearchResultsScreen';
 
 const Stack = createStackNavigator();
 
@@ -14,6 +15,7 @@ const AppNavigator = () => {
       <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ title: 'Forgot Password' }} />
       <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="SearchResults" component={SearchResultsScreen} options={{ title: 'Search Results' }} />
     </Stack.Navigator>
   );
 };
