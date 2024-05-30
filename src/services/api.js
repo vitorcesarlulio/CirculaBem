@@ -51,3 +51,13 @@ export const fetchCategories = async () => {
         throw error;
     }
 };
+
+export const fetchProducts = async () => {
+    try {
+        const response = await apiClient.get('/Product/');
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao buscar produtos:', error);
+        throw error;
+    }
+};
