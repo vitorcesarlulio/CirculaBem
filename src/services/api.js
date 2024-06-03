@@ -61,3 +61,13 @@ export const fetchProducts = async () => {
         throw error;
     }
 };
+
+export const fetchProductById = async (id) => {
+    try {
+        const response = await apiClient.get(`/Product/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao buscar detalhes do produto:', error);
+        throw error;
+    }
+};

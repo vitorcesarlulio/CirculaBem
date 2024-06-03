@@ -108,7 +108,10 @@ const HomeScreen = () => {
         >
           {/* Exibição dos itens */}
           {items.map((item, index) => (
-            <TouchableOpacity key={index} style={[styles.listingItem, { width: cardSize, height: cardSize }]}>
+            <TouchableOpacity 
+              key={index} 
+              style={[styles.listingItem, { width: cardSize, height: cardSize }]}
+              onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}>
               <Image source={{ uri: item.imageUrls[0] }} style={styles.listingImage} />
               <View style={styles.listingInfo}>
                 <Text style={styles.listingTitle}>{item.description}</Text>
