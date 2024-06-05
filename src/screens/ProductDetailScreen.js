@@ -7,7 +7,7 @@ import { fetchProductById, fetchUserById } from '../services/api'; // Ajuste o c
 const ProductDetailScreen = ({ route, navigation }) => {
   const { productId } = route.params;
   const [product, setProduct] = useState(null);
-  const [user, setUser] = useState(null);
+  const [renter, setRenter] = useState(null);
   const [loading, setLoading] = useState(true);
   const windowWidth = Dimensions.get('window').width;
 
@@ -18,8 +18,8 @@ const ProductDetailScreen = ({ route, navigation }) => {
         setProduct(productDetails);
 
         if (productDetails.ownerRegistrationNumber) {
-          const userDetails = await fetchUserById(productDetails.ownerRegistrationNumber);
-          setUser(userDetails);
+          const renterDetails = await fetchUserById(productDetails.ownerRegistrationNumber);
+          setRenter(renterDetails);
         }
       } catch (error) {
         console.error('Erro ao carregar detalhes do produto ou usuário:', error);
@@ -55,7 +55,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
       </Swiper>
       <View style={styles.detailsContainer}>
         <Text style={styles.title}>{product.name}</Text>
-        <Text style={styles.location}>{user.address.neighborhood}, {user.address.city} - 2.8 km</Text>
+        <Text style={styles.location}>{renter.address.neighborhood}, {renter.address.city} - 2.8 km</Text>
         <View style={styles.ratingContainer}>
           <Icon name="star" size={14} color="#FFD700" />
           <Text style={styles.ratingText}>4.7</Text>
@@ -64,7 +64,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
         <View style={styles.sellerContainer}>
           <Image source={{ uri: 'https://images.pexels.com/photos/15128415/pexels-photo-15128415/free-photo-of-moda-tendencia-homem-modelo.jpeg?auto=compress&cs=tinysrgb&w=600' }} style={styles.sellerImage} />
           <View>
-            <Text style={styles.sellerName}>{user ? user.name : 'Loading...'}</Text>
+            <Text style={styles.sellerName}>{renter ? renter.name : 'Loading...'}</Text>
             <Text style={styles.verifiedText}>Conta verificada</Text>
           </View>
           {/* <View style={styles.contactIcons}>
@@ -80,7 +80,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
         <Text style={styles.productDescription}>{product.description}</Text>
         <TouchableOpacity 
           style={styles.bookButton} 
-          onPress={() => navigation.navigate('SelectDate', { product, user })}
+          onPress={() => navigation.navigate('SelectDate', { product, renter })}
         >
           <Text style={styles.bookButtonText}>Alugue Agora</Text>
         </TouchableOpacity>
