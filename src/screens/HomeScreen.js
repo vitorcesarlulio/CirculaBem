@@ -1,8 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Image, StyleSheet, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import { fetchProducts, fetchCategories } from '../services/api'; // Certifique-se de ajustar o caminho de importação conforme necessário
+import BottomNavigationBar from '../screens/BottomNavigationBar';
+import { fetchProducts, fetchCategories, fetchUserById} from '../services/api'; // Certifique-se de ajustar o caminho de importação conforme necessário
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -12,6 +14,38 @@ const HomeScreen = () => {
   const scrollViewRef = useRef();
   const [items, setItems] = useState([]); // Estado para armazenar os produtos
   const [categories, setCategories] = useState([]); // Estado para armazenar as categorias
+  const [searchQuery, setSearchQuery] = useState('');
+  const [userLocation, setUserLocation] = useState("Carregando...");
+  
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        // Recupera o registrationNumber armazenado que é usado como userId
+        const userId = await AsyncStorage.getItem('registrationNumber');
+        if (!userId) {
+          setUserLocation("Usuário não identificado");
+          return;
+        }
+
+        // Busca os detalhes do usuário usando o userId
+        const userDetails = await fetchUserById(userId);
+        if (userDetails && userDetails.address) {
+          setUserLocation({
+            city: userDetails.address.city,
+            neighborhood: userDetails.address.neighborhood,
+            street: userDetails.address.street + ', ' + userDetails.address.number
+          });
+        } else {
+          setUserLocation("Localização não encontrada");
+        }
+      } catch (error) {
+        console.error('Erro ao buscar detalhes do usuário:', error);
+        setUserLocation("Erro ao carregar localização");
+      }
+    };
+
+    loadUserData();
+  }, []);
 
   useEffect(() => {
     // Centralizar a visualização inicial
@@ -44,6 +78,10 @@ const HomeScreen = () => {
     loadCategories();
   }, []);
 
+  const handlePressSearch = () => {
+    navigation.navigate('SearchResults', { query: searchQuery });
+};
+
   return (
     <View style={styles.container}>
       {/* Header: Localização e Notificações */}
@@ -51,7 +89,7 @@ const HomeScreen = () => {
         <View>
           <Text style={styles.locationLabel}>Sua localização</Text>
           <TouchableOpacity onPress={() => navigation.navigate('LocationScreen')}>
-            <Text style={styles.locationText}>San Francisco, California ▼</Text>
+            <Text style={styles.locationText}>{`${userLocation.street}, ${userLocation.neighborhood}, ${userLocation.city}`} ▼</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
@@ -62,11 +100,11 @@ const HomeScreen = () => {
       {/* Barra de Pesquisa */}
       <View style={styles.searchContainer}>
         <Icon name="search" size={20} color="gray" style={styles.searchIcon} />
-        <TextInput
+        <TextInput onPress={handlePressSearch}
           style={styles.searchBar}
           placeholder="O que você está procurando?"
           placeholderTextColor="gray"
-        />
+        /> 
       </View>
 
       {/* Categorias */}
@@ -114,8 +152,7 @@ const HomeScreen = () => {
               onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}>
               <Image source={{ uri: item.imageUrls[0] }} style={styles.listingImage} />
               <View style={styles.listingInfo}>
-                <Text style={styles.listingTitle}>{item.description}</Text>
-                <Text style={styles.listingPrice}>{item.price}</Text>
+                <Text style={styles.listingTitle}>{item.name}</Text>
               </View>
               <View style={styles.listingBadge}>
                 <Text style={styles.badgeText}>Available</Text>
@@ -132,30 +169,8 @@ const HomeScreen = () => {
       </View>
 
       {/* Menu Fixo */}
-      <View style={styles.fixedMenu}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          <Icon name="home" size={24} style={styles.menuIcon} />
-          <Text style={styles.menuText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
-          <Icon name="comment" size={24} style={styles.menuIcon} />
-          <Text style={styles.menuText}>Chats</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('AddNewItem')}>
-          <View style={styles.addButton}>
-            <Icon name="plus" size={24} color="white" />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Wishlist')}>
-          <Icon name="heart" size={24} style={styles.menuIcon} />
-          <Text style={styles.menuText}>Favorites</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-          <Icon name="user" size={24} style={styles.menuIcon} />
-          <Text style={styles.menuText}>Profile</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      <BottomNavigationBar />
+    </View> 
   );
 };
 
@@ -300,35 +315,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 14,
     fontWeight: 'bold',
-  },
-  fixedMenu: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    position: 'absolute',
-    bottom: 20, // Ajuste este valor para levantar o menu
-    left: 0,
-    right: 0,
-    backgroundColor: '#333', // Cor de fundo para combinar com a imagem
-    paddingVertical: 10,
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#ccc', // Cor da borda superior
-  },
-  menuIcon: {
-    color: 'white', // Cor dos ícones para combinar com a imagem
-  },
-  menuText: {
-    color: 'white', // Cor do texto para combinar com a imagem
-    fontSize: 12,
-  },
-  addButton: {
-    backgroundColor: '#0056b3', // Azul escuro para combinar com a imagem
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: -30, // Para posicionar o botão acima da barra de menu
   },
   container: {
     flex: 1,

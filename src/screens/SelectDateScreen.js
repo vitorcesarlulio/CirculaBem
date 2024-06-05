@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { fetchRentedDates } from '../services/api'; // Certifique-se de ajustar o caminho
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const SelectDateScreen = () => {
@@ -11,29 +12,45 @@ const SelectDateScreen = () => {
   const route = useRoute();
   const { product, user } = route.params;
 
-  const getAvailableDays = (month, year) => {
+  const getAvailableDays = async (month, year) => {
     let availableDays = {};
     let today = new Date(year, month - 1, 1);
     let end = new Date(year, month, 0);
 
     while (today <= end) {
       const dayOfWeek = today.getDay();
+      const dateString = today.toISOString().split('T')[0];
       if (product.availabilities.includes(dayOfWeek + 1)) {
-        const dateString = today.toISOString().split('T')[0];
         availableDays[dateString] = { disabled: false };
       } else {
-        const dateString = today.toISOString().split('T')[0];
         availableDays[dateString] = { disabled: true };
       }
       today.setDate(today.getDate() + 1);
     }
-    return availableDays;
+
+    const startDate = new Date(year, month - 1, 1).toISOString();
+    const endDate = new Date(year, month, 0).toISOString();
+
+    try {
+      const rentedDates = await fetchRentedDates(product.id, startDate, endDate);
+      rentedDates.forEach(rent => {
+        const start = new Date(rent.startDate);
+        const end = new Date(rent.endDate);
+        for (let d = start; d <= end; d.setDate(d.getDate() + 1)) {
+          const rentedDateString = d.toISOString().split('T')[0];
+          availableDays[rentedDateString] = { disabled: true, marked: true, dotColor: '#0000ff' }; // Azul para dias alugados
+        }
+      });
+    } catch (error) {
+      console.error('Erro ao buscar datas alugadas:', error);
+    }
+
+    setMarkedDates(availableDays);
   };
 
   useEffect(() => {
     const today = new Date();
-    const initialAvailableDays = getAvailableDays(today.getMonth() + 1, today.getFullYear());
-    setMarkedDates(initialAvailableDays);
+    getAvailableDays(today.getMonth() + 1, today.getFullYear());
   }, [product.availabilities]);
 
   const handleDateSelect = (day) => {
@@ -57,8 +74,7 @@ const SelectDateScreen = () => {
   };
 
   const handleMonthChange = (month) => {
-    const newMarkedDates = getAvailableDays(month.month, month.year);
-    setMarkedDates(newMarkedDates);
+    getAvailableDays(month.month, month.year);
   };
 
   const handleContinue = () => {

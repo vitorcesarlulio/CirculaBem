@@ -8,6 +8,7 @@ import SearchResultsScreen from '../screens/SearchResultsScreen';
 import ProductDetailScreen from '../screens/ProductDetailScreen';
 import SelectDateScreen from '../screens/SelectDateScreen';
 import FinalizeRentalScreen from '../screens/FinalizeRentalScreen';
+import NotificationsScreen from '../screens/NotificationsScreen';
 
 const Stack = createStackNavigator();
 
@@ -16,12 +17,13 @@ const AppNavigator = () => {
     <Stack.Navigator initialRouteName="Login">
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />
-      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ title: 'Forgot Password' }} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ title: 'Esqueceu sua senha' }} />
       <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="SearchResults" component={SearchResultsScreen} options={{ title: 'Search Results' }} />
-      <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ title: 'Product Details' }} />
-      <Stack.Screen name="SelectDate" component={SelectDateScreen} options={{ title: 'Select Date' }} />
-        <Stack.Screen name="FinalizeRental" component={FinalizeRentalScreen} options={{ title: 'Finalize Rental' }} />
+      <Stack.Screen name="SearchResults" component={SearchResultsScreen} options={{ title: 'Procurar Resultados' }} />
+      <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ title: 'Detalhes do produto' }} />
+      <Stack.Screen name="SelectDate" component={SelectDateScreen} options={{ title: 'Selecione a data' }} />
+      <Stack.Screen name="FinalizeRental" component={FinalizeRentalScreen} options={{ title: 'Finalizar aluguel' }} />
+      <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: 'Notifcações' }} />
     </Stack.Navigator>
   );
 };

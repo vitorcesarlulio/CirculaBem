@@ -34,7 +34,9 @@ export const authenticateUser = async (credentials) => {
     try {
         const response = await apiClient.post('/Authentication/authenticate', credentials);
         const token = response.data.token;
+        const registrationNumber = response.data.registrationNumber;
         await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('registrationNumber', registrationNumber);
         return response.data;
     } catch (error) {
         console.error('Erro ao autenticar usuário:', error);
@@ -68,6 +70,27 @@ export const fetchProductById = async (id) => {
         return response.data;
     } catch (error) {
         console.error('Erro ao buscar detalhes do produto:', error);
+        throw error;
+    }
+};
+
+export const fetchUserById = async (id) => {
+    try {
+        console.log(id)
+        const response = await apiClient.get(`/User/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao buscar detalhes do usuario:', error);
+        throw error;
+    }
+};
+
+export const fetchRentedDates = async (productId, startDate, endDate) => {
+    try {
+        const response = await apiClient.get(`/Rent/by-preoduct/${productId}?startDate=${startDate}&endDate=${endDate}`);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao buscar datas alugadas:', error);
         throw error;
     }
 };
