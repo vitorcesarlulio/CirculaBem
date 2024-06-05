@@ -1,75 +1,91 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const FinalizeRentalScreen = ({ route }) => {
-  const { selectedDate, product, renter } = route.params;
+  const { startDate, endDate, selectedDates, product, renter } = route.params;
   const navigation = useNavigation();
   const windowWidth = Dimensions.get('window').width;
 
+  const [showRenterInfo, setShowRenterInfo] = useState(false);
+  const [showRentButton, setShowRentButton] = useState(true);
+
   const handleRent = () => {
     // Função para processar o aluguel
-    // Aqui você pode adicionar a lógica para finalizar o aluguel
+    setShowRenterInfo(true);
+    setShowRentButton(false);
     alert('Aluguel confirmado!');
+  };
+
+  const handleGoHome = () => {
+    navigation.navigate('Home'); // Ajuste 'Home' para o nome correto da tela inicial na sua navegação
+  };
+
+  const formatDate = (date) => {
+    const [year, month, day] = date.split('-');
+    return `${day}/${month}/${year}`;
   };
 
   return (
     <View style={styles.container}>
+      <Text style={styles.stepText}>Etapa 2 de 2</Text>
       {/* Barra de progresso */}
       <View style={styles.progressBar}>
         <View style={styles.progressStepCompleted} />
-        <View style={styles.progressStepCompleted} />
-        <View style={styles.progressStepActive} />
       </View>
-      <Text style={styles.stepText}>Step 3 of 3</Text>
 
+      <Text style={styles.detailsTitle}>Item de Aluguel</Text>
       {/* Card do item */}
       <View style={styles.itemCard}>
-        <Image source={{ uri: product.imageUrl }} style={styles.itemImage} />
-        <View>
-          <Text style={styles.itemTitle}>{product.title}</Text>
-          <Text style={styles.itemPrice}>${product.price} / day</Text>
+        <Image source={{ uri: product.imageUrls[0] }} style={styles.itemImage} />
+        <View style={{ flex: 1 }}>
+          <Text style={styles.itemTitle} numberOfLines={2} ellipsizeMode="tail">{product.name}</Text>
         </View>
       </View>
 
       {/* Detalhes do aluguel */}
       <View style={styles.detailsContainer}>
-        <Text style={styles.detailsTitle}>Rental Details</Text>
+        <Text style={styles.detailsTitle}>Detalhes do Aluguel</Text>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Rental Period:</Text>
-          <Text style={styles.detailValue}>{selectedDate}</Text>
+          <Text style={styles.detailLabel}>Período de aluguel:</Text>
+          <Text style={styles.detailValue}>{formatDate(startDate)} - {formatDate(endDate)}</Text>
         </View>
         <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Price:</Text>
-          <Text style={styles.detailValue}>${product.price}</Text>
-        </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Days:</Text>
-          <Text style={styles.detailValue}>1</Text>
+          <Text style={styles.detailLabel}>Dias:</Text>
+          <Text style={styles.detailValue}>{selectedDates.length}</Text>
         </View>
         {/* Adicione mais detalhes conforme necessário */}
       </View>
 
       {/* Informações do locador */}
-      <View style={styles.renterInfoContainer}>
-        <Text style={styles.renterInfoTitle}>Renter Information</Text>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Name:</Text>
-          <Text style={styles.detailValue}>{renter.name}</Text>
+      {showRenterInfo && (
+        <View style={styles.renterInfoContainer}>
+          <Text style={styles.renterInfoTitle}>Informações do locatário</Text>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Nome:</Text>
+            <Text style={styles.detailValue}>{renter.name}</Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Endereço:</Text>
+            <Text style={styles.detailValue}>{renter.address}</Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Whatsapp:</Text>
+            {/* <Text style={styles.detailValue}>{renter.whatsapp}</Text> */}
+            <Text style={styles.detailValue}>+55 (19) 99625-8494</Text>
+          </View>
         </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Address:</Text>
-          <Text style={styles.detailValue}>{renter.address}</Text>
-        </View>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>WhatsApp:</Text>
-          <Text style={styles.detailValue}>{renter.whatsapp}</Text>
-        </View>
-      </View>
+      )}
 
-      <TouchableOpacity style={styles.rentButton} onPress={handleRent}>
-        <Text style={styles.rentButtonText}>Rent Now</Text>
-      </TouchableOpacity>
+      {showRentButton ? (
+        <TouchableOpacity style={styles.rentButton} onPress={handleRent}>
+          <Text style={styles.rentButtonText}>Alugar Agora</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity style={styles.goHomeButton} onPress={handleGoHome}>
+          <Text style={styles.goHomeButtonText}>Ir para Home</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -90,10 +106,7 @@ const styles = StyleSheet.create({
   progressStepCompleted: {
     flex: 1,
     backgroundColor: '#16E024',
-  },
-  progressStepActive: {
-    flex: 1,
-    backgroundColor: '#233ED9',
+    borderRadius: 5,
   },
   stepText: {
     fontSize: 16,
@@ -159,6 +172,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rentButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  goHomeButton: {
+    backgroundColor: '#233ED9',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  goHomeButtonText: {
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',

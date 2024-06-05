@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Swiper from 'react-native-swiper';
-import { fetchProductById } from '../services/api'; // Certifique-se de ajustar o caminho de importação conforme necessário
+import { fetchProductById, fetchUserById } from '../services/api'; // Ajuste o caminho de importação conforme necessário
 
 const ProductDetailScreen = ({ route, navigation }) => {
   const { productId } = route.params;
   const [product, setProduct] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const windowWidth = Dimensions.get('window').width;
 
@@ -15,8 +16,13 @@ const ProductDetailScreen = ({ route, navigation }) => {
       try {
         const productDetails = await fetchProductById(productId);
         setProduct(productDetails);
+
+        if (productDetails.ownerRegistrationNumber) {
+          const userDetails = await fetchUserById(productDetails.ownerRegistrationNumber);
+          setUser(userDetails);
+        }
       } catch (error) {
-        console.error('Erro ao carregar detalhes do produto:', error);
+        console.error('Erro ao carregar detalhes do produto ou usuário:', error);
       } finally {
         setLoading(false);
       }
@@ -33,14 +39,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
     return <Text>Produto não encontrado.</Text>;
   }
 
-  const renderImageItem = ({ item }) => {
-    return (
-      <View style={styles.carouselItem}>
-        <Image source={{ uri: item }} style={styles.carouselImage} resizeMode="cover" />
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <Swiper
@@ -56,32 +54,35 @@ const ProductDetailScreen = ({ route, navigation }) => {
         ))}
       </Swiper>
       <View style={styles.detailsContainer}>
-        <Text style={styles.title}>{product.description}</Text>
-        <Text style={styles.location}>San Francisco, California - 2.8 km</Text>
+        <Text style={styles.title}>{product.name}</Text>
+        <Text style={styles.location}>{user.address.neighborhood}, {user.address.city} - 2.8 km</Text>
         <View style={styles.ratingContainer}>
           <Icon name="star" size={14} color="#FFD700" />
           <Text style={styles.ratingText}>4.7</Text>
-          <Text style={styles.reviewCount}>(64 reviews & ratings)</Text>
+          <Text style={styles.reviewCount}>(64 avaliações & classificações)</Text>
         </View>
         <View style={styles.sellerContainer}>
           <Image source={{ uri: 'https://images.pexels.com/photos/15128415/pexels-photo-15128415/free-photo-of-moda-tendencia-homem-modelo.jpeg?auto=compress&cs=tinysrgb&w=600' }} style={styles.sellerImage} />
           <View>
-            <Text style={styles.sellerName}>Bernadette Rayner</Text>
-            <Text style={styles.verifiedText}>Verified account</Text>
+            <Text style={styles.sellerName}>{user ? user.name : 'Loading...'}</Text>
+            <Text style={styles.verifiedText}>Conta verificada</Text>
           </View>
-          <View style={styles.contactIcons}>
+          {/* <View style={styles.contactIcons}>
             <TouchableOpacity>
               <Icon name="phone" size={24} style={styles.icon} />
             </TouchableOpacity>
             <TouchableOpacity>
               <Icon name="comment" size={24} style={styles.icon} />
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
-        <Text style={styles.title}>Description</Text>
+        <Text style={styles.title}>Descrição</Text>
         <Text style={styles.productDescription}>{product.description}</Text>
-        <TouchableOpacity style={styles.bookButton} onPress={() => navigation.navigate('SelectDate', { product })}>
-          <Text style={styles.bookButtonText}>Book Now</Text>
+        <TouchableOpacity 
+          style={styles.bookButton} 
+          onPress={() => navigation.navigate('SelectDate', { product, user })}
+        >
+          <Text style={styles.bookButtonText}>Alugue Agora</Text>
         </TouchableOpacity>
       </View>
     </View>
