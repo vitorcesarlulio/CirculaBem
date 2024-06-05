@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import BottomNavigationBar from '../screens/BottomNavigationBar';
-import { fetchProducts, fetchCategories, fetchUserById} from '../services/api'; // Certifique-se de ajustar o caminho de importação conforme necessário
+import { fetchProducts, fetchCategories, fetchUserById } from '../services/api'; // Certifique-se de ajustar o caminho de importação conforme necessário
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -16,7 +16,7 @@ const HomeScreen = () => {
   const [categories, setCategories] = useState([]); // Estado para armazenar as categorias
   const [searchQuery, setSearchQuery] = useState('');
   const [userLocation, setUserLocation] = useState("Carregando...");
-  
+
   useEffect(() => {
     const loadUserData = async () => {
       try {
@@ -80,7 +80,7 @@ const HomeScreen = () => {
 
   const handlePressSearch = () => {
     navigation.navigate('SearchResults', { query: searchQuery });
-};
+  };
 
   return (
     <View style={styles.container}>
@@ -104,7 +104,7 @@ const HomeScreen = () => {
           style={styles.searchBar}
           placeholder="O que você está procurando?"
           placeholderTextColor="gray"
-        /> 
+        />
       </View>
 
       {/* Categorias */}
@@ -144,10 +144,9 @@ const HomeScreen = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.listingsScroll}
         >
-          {/* Exibição dos itens */}
           {items.map((item, index) => (
-            <TouchableOpacity 
-              key={index} 
+            <TouchableOpacity
+              key={index}
               style={[styles.listingItem, { width: cardSize, height: cardSize }]}
               onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}>
               <Image source={{ uri: item.imageUrls[0] }} style={styles.listingImage} />
@@ -155,7 +154,7 @@ const HomeScreen = () => {
                 <Text style={styles.listingTitle}>{item.name}</Text>
               </View>
               <View style={styles.listingBadge}>
-                <Text style={styles.badgeText}>Available</Text>
+                <Text style={styles.badgeText}>Disponível</Text>
               </View>
               <View style={styles.listingRating}>
                 <Icon name="star" size={14} color="#FFD700" />
@@ -163,14 +162,13 @@ const HomeScreen = () => {
               </View>
             </TouchableOpacity>
           ))}
-          {/* Espaço final fictício */}
           <View style={{ width: sideSpacing }} />
         </ScrollView>
       </View>
 
       {/* Menu Fixo */}
       <BottomNavigationBar />
-    </View> 
+    </View>
   );
 };
 
@@ -295,14 +293,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     left: 10,
-    backgroundColor: 'green',
-    borderRadius: 5,
-    paddingHorizontal: 5,
-    paddingVertical: 2,
+    backgroundColor: '#d4edda',  // Verde claro
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    alignItems: 'center',
   },
   badgeText: {
-    color: 'white',
-    fontSize: 12,
+    color: '#155724',  // Verde escuro
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   listingRating: {
     position: 'absolute',
