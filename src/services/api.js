@@ -76,7 +76,6 @@ export const fetchProductById = async (id) => {
 
 export const fetchUserById = async (id) => {
     try {
-        console.log(id)
         const response = await apiClient.get(`/User/${id}`);
         return response.data;
     } catch (error) {
@@ -91,6 +90,16 @@ export const fetchRentedDates = async (productId, startDate, endDate) => {
         return response.data;
     } catch (error) {
         console.error('Erro ao buscar datas alugadas:', error);
+        throw error;
+    }
+};
+
+export const createRental = async (rentalData) => {
+    try {
+        const response = await apiClient.post('/Rent', rentalData);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao criar aluguel:', error);
         throw error;
     }
 };

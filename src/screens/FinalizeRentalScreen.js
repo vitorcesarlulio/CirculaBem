@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { createRental } from '../services/api';
 
 const FinalizeRentalScreen = ({ route }) => {
   const { startDate, endDate, selectedDates, product, renter } = route.params;
@@ -10,11 +11,28 @@ const FinalizeRentalScreen = ({ route }) => {
   const [showRenterInfo, setShowRenterInfo] = useState(false);
   const [showRentButton, setShowRentButton] = useState(true);
 
-  const handleRent = () => {
-    // Função para processar o aluguel
-    setShowRenterInfo(true);
-    setShowRentButton(false);
-    alert('Aluguel confirmado!');
+  const handleRent = async () => {
+    if (!renter || !product) {
+      alert('Erro: Dados do usuário ou produto não encontrados.');
+      return;
+    }
+
+    const rentalData = {
+      userRegistrationNumber: renter.registrationNumber,
+      productId: product.id,
+      startDate: `${startDate}T00:00:00.000Z`,
+      endDate: `${endDate}T23:59:59.999Z`
+    };
+
+    try {
+      await createRental(rentalData);
+      setShowRenterInfo(true);
+      setShowRentButton(false);
+      alert('Aluguel confirmado!');
+    } catch (error) {
+      console.error('Erro ao confirmar aluguel:', error);
+      alert('Erro ao confirmar aluguel. Tente novamente.');
+    }
   };
 
   const handleGoHome = () => {
@@ -36,12 +54,14 @@ const FinalizeRentalScreen = ({ route }) => {
 
       <Text style={styles.detailsTitle}>Item de Aluguel</Text>
       {/* Card do item */}
-      <View style={styles.itemCard}>
-        <Image source={{ uri: product.imageUrls[0] }} style={styles.itemImage} />
-        <View style={{ flex: 1 }}>
-          <Text style={styles.itemTitle} numberOfLines={2} ellipsizeMode="tail">{product.name}</Text>
+      {product && (
+        <View style={styles.itemCard}>
+          <Image source={{ uri: product.imageUrls[0] }} style={styles.itemImage} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.itemTitle} numberOfLines={2} ellipsizeMode="tail">{product.name}</Text>
+          </View>
         </View>
-      </View>
+      )}
 
       {/* Detalhes do aluguel */}
       <View style={styles.detailsContainer}>
@@ -58,7 +78,7 @@ const FinalizeRentalScreen = ({ route }) => {
       </View>
 
       {/* Informações do locador */}
-      {showRenterInfo && (
+      {showRenterInfo && renter && (
         <View style={styles.renterInfoContainer}>
           <Text style={styles.renterInfoTitle}>Informações do locatário</Text>
           <View style={styles.detailRow}>
@@ -67,7 +87,7 @@ const FinalizeRentalScreen = ({ route }) => {
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Endereço:</Text>
-            <Text style={styles.detailValue}>{renter.address}</Text>
+            <Text style={styles.detailValue}>{`${renter.address.neighborhood}, ${renter.address.city}`}</Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Whatsapp:</Text>

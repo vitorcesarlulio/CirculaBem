@@ -10,7 +10,7 @@ const SelectDateScreen = () => {
   const [markedDates, setMarkedDates] = useState({});
   const navigation = useNavigation();
   const route = useRoute();
-  const { product, user } = route.params;
+  const { product, renter } = route.params;
 
   const getAvailableDays = async (month, year) => {
     let availableDays = {};
@@ -88,12 +88,7 @@ const SelectDateScreen = () => {
         endDate, 
         selectedDates,
         product, 
-        user,
-        renter: {
-          name: user.name,
-          address: `${user.address.neighborhood}, ${user.address.city}`,
-          whatsapp: user.phone // Assuming you have this information, adjust accordingly
-        }
+        renter
       });
     } else {
       alert('Selecione pelo menos uma data');
