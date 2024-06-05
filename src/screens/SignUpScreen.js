@@ -29,6 +29,15 @@ function validateCPF(cpf) {
     return true;
 }
 
+// Função para normalizar o CEP
+function normalizeCep(cep) {
+    return cep.replace(/\D/g, ''); // Remove todos os caracteres que não são dígitos
+}
+
+function normalizeDocument(document) {
+    return document.replace(/\D/g, ''); // Remove todos os caracteres que não são dígitos
+}
+
 // Esquema de validação Yup
 const signUpValidationSchema = Yup.object().shape({
     name: Yup.string()
@@ -57,7 +66,7 @@ const signUpValidationSchema = Yup.object().shape({
     street: Yup.string()
         .required('Rua é obrigatória'),
     number: Yup.string()
-        .required('Número é obrigatória'),
+        .required('Número é obrigatório'),
     complement: Yup.string()
 });
 
@@ -67,7 +76,7 @@ const SignUpScreen = () => {
 
     const fetchAddress = async (cep, setFieldValue) => {
         try {
-            const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+            const response = await axios.get(`https://viacep.com.br/ws/${normalizeCep(cep)}/json/`);
             const { uf, localidade, bairro, logradouro } = response.data;
             setFieldValue('state', uf);
             setFieldValue('city', localidade);
@@ -96,8 +105,25 @@ const SignUpScreen = () => {
             }}
             validationSchema={signUpValidationSchema}
             onSubmit={async (values) => {
+                const normalizedValues = {
+                    name: values.name,
+                    surName: values.surName,
+                    email: values.email,
+                    pwd: values.pwd,
+                    regNum: normalizeDocument(values.regNum),
+                    address: {
+                        userRegistrationNumber: normalizeDocument(values.regNum),
+                        cep: normalizeCep(values.cep),
+                        state: values.state,
+                        city: values.city,
+                        neighborhood: values.neighborhood,
+                        street: values.street,
+                        number: values.number,
+                        complement: values.complement
+                    }
+                };
                 try {
-                    await registerUser(values);
+                    await registerUser(normalizedValues);
                     toast.show({
                         description: "Usuário cadastrado com sucesso.",
                         status: "success",
