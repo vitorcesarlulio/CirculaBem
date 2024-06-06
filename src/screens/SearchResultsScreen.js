@@ -64,7 +64,6 @@ const SearchResultsScreen = ({ route, navigation }) => {
               <Image source={{ uri: item.imageUrls[0] }} style={styles.listingImage} />
               <View style={styles.listingInfo}>
                 <Text style={styles.listingTitle}>{item.name}</Text>
-                <Text style={styles.listingPrice}>${item.price}</Text>
               </View>
             </TouchableOpacity>
           </View>

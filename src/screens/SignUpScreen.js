@@ -163,7 +163,7 @@ const SignUpScreen = () => {
                             fontSize="md"
                             py="3"
                             w="full"
-                            InputLeftElement={<Icon as={MaterialIcons} name="person_outline" size="sm" m="2" color="muted.400" />}
+                            //InputLeftElement={<Icon as={MaterialIcons} name="person_outline" size="sm" m="2" color="muted.400" />}
                         />
                         {touched.surName && errors.surName && <Text color="danger.600" fontSize="xs">{errors.surName}</Text>}
                         <Input
@@ -197,7 +197,7 @@ const SignUpScreen = () => {
                             fontSize="md"
                             py="3"
                             w="full"
-                            InputLeftElement={<Icon as={MaterialIcons} name="confirmation_number" size="sm" m="2" color="muted.400" />}
+                            //InputLeftElement={<Icon as={MaterialIcons} name="confirmation_number" size="sm" m="2" color="muted.400" />}
                         />
                         {touched.regNum && errors.regNum && <Text color="danger.600" fontSize="xs">{errors.regNum}</Text>}
                         <Input
