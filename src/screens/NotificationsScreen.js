@@ -7,7 +7,7 @@ import BottomNavigationBar from '../screens/BottomNavigationBar';
 const sampleNotifications = [
   { id: '1', title: 'Produtos da Semana', details: 'Confira os melhores produtos da semana disponíveis!', date: '2024-05-07', icon: 'gift' },
   { id: '2', title: 'Atualização de Sistema', details: 'Seu sistema foi atualizado com sucesso.', date: '2024-05-01', icon: 'refresh' },
-  { id: '3', title: 'Atualização Cadastral', details: 'Excedeu o prazo de atualização do seu cadastro! Clique aqui para atualizar', date: '2024-04-26', icon: 'user-edit' }
+  { id: '3', title: 'Atualização Cadastral', details: 'Excedeu o prazo de atualização do seu cadastro! Clique aqui para atualizar', date: '2024-04-26', icon: '' }
 ];
 
 const NotificationsScreen = () => {
