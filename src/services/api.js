@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE_URL = 'https://circulabemapi.azurewebsites.net/api';
+const API_BASE_URL = 'https://circulabem-service.fly.dev/api';
 
 const apiClient = axios.create({
     baseURL: API_BASE_URL,
