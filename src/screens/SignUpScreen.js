@@ -1,5 +1,5 @@
 import React from 'react';
-import { VStack, Input, Button, Checkbox, Icon, Text, Link, Box, useToast } from 'native-base';
+import { ScrollView, VStack, Input, Button, Checkbox, Icon, Text, Link, Box, useToast } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { registerUser } from '../services/api';
@@ -98,6 +98,14 @@ const SignUpScreen = () => {
     };
 
     return (
+        <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            keyboardShouldPersistTaps="always" // Permite que os campos continuem focados
+          >
         <Formik
             initialValues={{
                 name: '', surName: '', email: '', pwd: '', regNum: '',
@@ -288,6 +296,7 @@ const SignUpScreen = () => {
                 </VStack>
             )}
         </Formik>
+        </ScrollView>
     );
 };
 
